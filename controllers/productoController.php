@@ -27,6 +27,13 @@ class productoController {
             case "POST":
                 $respuesta = $this->createProducto();
                 break;
+            case "PUT":
+                if($this->productoId) {
+                    $respuesta = $this->updateProducto($this->productoId);
+                } else {
+                    $respuesta = $this->respuestaNoEncontrada();
+                }
+                break;
             case "DELETE":
                 if($this->productoId) {
                     $respuesta = $this->deleteProducto($this->productoId);
@@ -101,6 +108,42 @@ class productoController {
             $respuesta['body'] = json_encode([
                 'success' => false,
                 'error' => 'No se pudo crear el producto'
+            ]);
+        }
+        return $respuesta;
+    }
+
+    private function updateProducto($id) {
+        $result = $this->productoDB->getbyId($id);
+        if (!$result) {
+            return $this->respuestaNoEncontrada();
+        }
+
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+
+        if (!isset($input['codigo']) || !isset($input['nombre']) || !isset($input['precio'])) {
+            $respuesta['status_code_header'] = 'HTTP/1.1 422 Unprocessable Entity';
+            $respuesta['body'] = json_encode([
+                'success' => false,
+                'error' => 'Datos inválidos: codigo, nombre y precio son obligatorios'
+            ]);
+            return $respuesta;
+        }
+
+        $input['descripcion'] = isset($input['descripcion']) ? $input['descripcion'] : '';
+        $input['imagen'] = isset($input['imagen']) ? $input['imagen'] : '';
+
+        if ($this->productoDB->updateProducto($id, $input)) {
+            $respuesta['status_code_header'] = 'HTTP/1.1 200 OK';
+            $respuesta['body'] = json_encode([
+                'success' => true,
+                'message' => 'Producto actualizado correctamente'
+            ]);
+        } else {
+            $respuesta['status_code_header'] = 'HTTP/1.1 500 Internal Server Error';
+            $respuesta['body'] = json_encode([
+                'success' => false,
+                'error' => 'No se pudo actualizar el producto'
             ]);
         }
         return $respuesta;
