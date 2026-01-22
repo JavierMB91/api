@@ -24,6 +24,9 @@ class productoController {
                     $respuesta = $this->getAllProductos();
                 }
                 break;
+            case "POST":
+                $respuesta = $this->createProducto();
+                break;
             case "DELETE":
                 if($this->productoId) {
                     $respuesta = $this->deleteProducto($this->productoId);
@@ -69,6 +72,38 @@ class productoController {
         ]);
         return $respuesta;
 
+    }
+
+    private function createProducto() {
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+
+        if (!isset($input['codigo']) || !isset($input['nombre']) || !isset($input['precio'])) {
+            $respuesta['status_code_header'] = 'HTTP/1.1 422 Unprocessable Entity';
+            $respuesta['body'] = json_encode([
+                'success' => false,
+                'error' => 'Datos inválidos: codigo, nombre y precio son obligatorios'
+            ]);
+            return $respuesta;
+        }
+
+        // Asignar valores por defecto a campos opcionales para evitar errores
+        $input['descripcion'] = isset($input['descripcion']) ? $input['descripcion'] : '';
+        $input['imagen'] = isset($input['imagen']) ? $input['imagen'] : '';
+
+        if ($this->productoDB->createProducto($input)) {
+            $respuesta['status_code_header'] = 'HTTP/1.1 201 Created';
+            $respuesta['body'] = json_encode([
+                'success' => true,
+                'message' => 'Producto creado correctamente'
+            ]);
+        } else {
+            $respuesta['status_code_header'] = 'HTTP/1.1 500 Internal Server Error';
+            $respuesta['body'] = json_encode([
+                'success' => false,
+                'error' => 'No se pudo crear el producto'
+            ]);
+        }
+        return $respuesta;
     }
 
     private function deleteProducto($id) {

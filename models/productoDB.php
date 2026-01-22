@@ -49,6 +49,16 @@ class ProductoDB {
         return null;
     }
 
+    public function createProducto($input) {
+        return $this->insert(
+            $input['codigo'],
+            $input['nombre'],
+            $input['precio'],
+            $input['descripcion'],
+            $input['imagen']
+        );
+    }
+
     public function delete($id) {
         $sql = "DELETE FROM {$this->table} WHERE id = ?";
 
