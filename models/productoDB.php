@@ -48,4 +48,47 @@ class ProductoDB {
         }
         return null;
     }
+
+    public function delete($id) {
+        $sql = "DELETE FROM {$this->table} WHERE id = ?";
+
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            if($stmt->affected_rows > 0) {
+                $stmt->close();
+                return true;
+            }
+
+            $stmt->close();
+        }
+        return false;
+    }
+
+    public function insert($codigo, $nombre, $precio, $descripcion, $imagen, $id = null) {
+        if($id) {
+            $sql = "INSERT INTO {$this->table} (id, codigo, nombre, precio, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            if($stmt){
+                $stmt->bind_param("issdss", $id, $codigo, $nombre, $precio, $descripcion, $imagen);
+            }
+        } else {
+            $sql = "INSERT INTO {$this->table} (codigo, nombre, precio, descripcion, imagen) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            if($stmt){
+                $stmt->bind_param("ssdss", $codigo, $nombre, $precio, $descripcion, $imagen);
+            }
+        }
+
+        if($stmt){
+            if($stmt->execute()) {
+                $stmt->close();
+                return true;
+            }
+            $stmt->close();
+        }
+        return false;
+    }
 }

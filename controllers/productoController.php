@@ -24,6 +24,13 @@ class productoController {
                     $respuesta = $this->getAllProductos();
                 }
                 break;
+            case "DELETE":
+                if($this->productoId) {
+                    $respuesta = $this->deleteProducto($this->productoId);
+                } else {
+                    $respuesta = $this->respuestaNoEncontrada();
+                }
+                break;
             default:
                 $respuesta = $this->respuestaNoEncontrada();
         }
@@ -62,6 +69,25 @@ class productoController {
         ]);
         return $respuesta;
 
+    }
+
+    private function deleteProducto($id) {
+        $resultado = $this->productoDB->delete($id);
+
+        if($resultado) {
+            $respuesta['status_code_header'] = 'HTTP/1.1 200 OK';
+            $respuesta['body'] = json_encode([
+                'success' => true,
+                'message' => 'Producto eliminado correctamente'
+            ]);
+        } else {
+            $respuesta['status_code_header'] = 'HTTP/1.1 404 Not Found';
+            $respuesta['body'] = json_encode([
+                'success' => false,
+                'error' => 'No se pudo eliminar el producto'
+            ]);
+        }
+        return $respuesta;
     }
 
     private function respuestaNoEncontrada() {
