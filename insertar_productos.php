@@ -1,7 +1,7 @@
 <?php
 
 require_once 'config/database.php';
-require_once 'models/productoDB.php';
+require_once 'models/productosDB.php';
 
 // Crear instancia de base de datos
 $database = new Database();

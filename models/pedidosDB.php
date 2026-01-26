@@ -1,0 +1,112 @@
+<?php
+class pedidosDB {
+    private $db;
+    private $table = 'pedidos';
+
+    public function __construct($database) {
+        $this->db = $database->getConnection();
+    }
+
+    //extraer los pedidos
+    public function getAll() {
+        $sql = "SELECT * FROM {$this->table}";
+
+        $resultado = $this->db->query($sql);
+
+        if($resultado && $resultado->num_rows > 0) {
+            $pedidos = [];
+
+            while($row = $resultado->fetch_assoc()) {
+                $pedidos[] = $row;
+            }
+
+            return $pedidos;
+        }
+        return [];
+    }
+
+    //extraer pedido por id
+    public function getbyId($id) {
+        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            $resultado = $stmt->get_result();
+
+            if($resultado && $resultado->num_rows > 0) {
+                $stmt->close();
+                return $resultado->fetch_assoc();
+            }
+            $stmt->close();
+        }
+        return null;
+    }
+
+    //crear un nuevo pedido
+    public function crearPedido($input) {
+        $sql = "INSERT INTO {$this->table} (id_usuario, fecha, total) VALUES (?, ?, ?)";
+
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            $fecha = date('Y-m-d H:i:s');
+
+            $stmt->bind_param("isd", 
+                $input['id_usuario'],
+                $fecha,
+                $input['total']
+            );
+
+            if($stmt->execute()) {
+                $id = $this->db->insert_id;
+                $stmt->close();
+                return $id;
+            }
+            $stmt->close();
+        }
+        return false;
+    }
+
+    //actualizar un pedido
+    public function actualizarPedido($id, $input) {
+        $sql = "UPDATE {$this->table} SET total = ? WHERE id = ?";
+
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            $stmt->bind_param("di", 
+                $input['total'],
+                $id
+            );
+
+            if($stmt->execute()) {
+                $stmt->close();
+                return true;
+            }
+            $stmt->close();
+        }
+        return false;
+    }
+
+    //eliminar un pedido
+    public function eliminarPedido($id) {
+        // Nota: Si la base de datos tiene una restricción de clave foránea (foreign key)
+        // en la tabla `linea_pedidos` que apunta a `pedidos`, puede que necesites
+        // borrar las líneas de pedido asociadas primero, o configurar la clave foránea
+        // con `ON DELETE CASCADE`.
+        $sql = "DELETE FROM {$this->table} WHERE id = ?";
+
+        $stmt = $this->db->prepare($sql);
+        if($stmt){
+            $stmt->bind_param("i", $id);
+
+            if($stmt->execute() && $stmt->affected_rows > 0) {
+                $stmt->close();
+                return true;
+            }
+            $stmt->close();
+        }
+        return false;
+    }
+}

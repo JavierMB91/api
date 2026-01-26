@@ -14,7 +14,13 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once '../config/config.php';
 require_once '../config/database.php';
 require_once '../controllers/productoController.php';
-require_once '../models/productoDB.php';
+require_once '../controllers/usuarioController.php';
+require_once '../controllers/lineaPedidoController.php';
+require_once '../controllers/pedidoController.php';
+require_once '../models/productosDB.php';
+require_once '../models/usuariosDB.php';
+require_once '../models/linea_pedidosDB.php';
+require_once '../models/pedidosDB.php';
 
 //averiguar la url de la peticion
 $requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -22,27 +28,40 @@ $requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 //obtener el metodo utilizado en la peticion
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-//Dividir en segmentos la url
+//Dividir en segmentos la url (ej: /api/api/productos/1 -> ['', 'api', 'api', 'productos', '1'])
 $segmentos = explode('/', trim($requestUrl, '/'));
 
-if($segmentos[1] !== 'api' || !isset($segmentos[2]) || $segmentos[2]!== 'productos') {
-    $respuesta['status_code_header'] = 'HTTP/1.1 404 Not Found';
-    echo json_encode([
-        'success' => false,
-        'error' => 'Endpoint no encontrado'
-    ]);
-    exit();
-}
-
-
-$productoId = null;
-if(isset($segmentos[3])) {
-    $productoId = (int) $segmentos[3];
-}
+// El nombre del recurso (endpoint) debería ser el tercer segmento (ej: 'productos' o 'usuarios')
+$endpoint = $segmentos[2] ?? null;
+$resourceId = $segmentos[3] ?? null;
 
 $database = new Database();
-$productoController = new ProductoController($database, $requestMethod, $productoId);
-$productoController->processRequest();
+$controller = null;
+
+switch ($endpoint) {
+    case 'productos':
+        $controller = new ProductoController($database, $requestMethod, $resourceId);
+        break;
+    case 'usuarios':
+        $controller = new UsuarioController($database, $requestMethod, $resourceId);
+        break;
+    case 'linea_pedidos':
+        $controller = new LineaPedidoController($database, $requestMethod, $resourceId);
+        break;
+    case 'pedidos':
+        $controller = new PedidoController($database, $requestMethod, $resourceId);
+        break;
+    default:
+        // Si el endpoint no es válido, enviar error 404
+        header('HTTP/1.1 404 Not Found');
+        echo json_encode([
+            'success' => false,
+            'error' => 'Endpoint no encontrado'
+        ]);
+        exit();
+}
+
+if ($controller) {
+    $controller->processRequest();
+}
 $database->close();
-
-
