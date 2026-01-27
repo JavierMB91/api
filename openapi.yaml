@@ -17,6 +17,8 @@ tags:
     description: Gestión de usuarios del sistema
   - name: Productos
     description: Catálogo de productos
+  - name: Pedidos
+    description: Gestión de pedidos realizados
 
 paths:
   # --- AUTH ---
@@ -85,6 +87,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Detalle del usuario
@@ -102,6 +105,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       requestBody:
         content:
           application/json:
@@ -120,6 +124,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Usuario eliminado
@@ -165,6 +170,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Detalle del producto
@@ -184,6 +190,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       requestBody:
         content:
           application/json:
@@ -204,9 +211,104 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Producto eliminado
+
+  # --- PEDIDOS ---
+  /pedidos:
+    get:
+      tags:
+        - Pedidos
+      summary: Listar pedidos
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pedido'
+    post:
+      tags:
+        - Pedidos
+      summary: Crear pedido
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PedidoInput'
+      responses:
+        '201':
+          description: Pedido creado exitosamente
+
+  /pedidos/{id}:
+    get:
+      tags:
+        - Pedidos
+      summary: Obtener pedido por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Detalle del pedido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+    put:
+      tags:
+        - Pedidos
+      summary: Actualizar pedido
+      description: Actualiza el estado o los datos de un pedido existente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PedidoInput'
+      responses:
+        '200':
+          description: Pedido actualizado
+    delete:
+      tags:
+        - Pedidos
+      summary: Eliminar pedido
+      description: Elimina un registro de pedido (usar con precaución).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Pedido eliminado
 
 components:
   securitySchemes:
@@ -229,6 +331,7 @@ components:
         password:
           type: string
           format: password
+          minLength: 6
           example: "123456"
     LoginResponse:
       type: object
@@ -262,9 +365,14 @@ components:
       properties:
         nombre:
           type: string
+          minLength: 2
+          maxLength: 100
+          pattern: '^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
           example: "Nuevo Usuario"
         email:
           type: string
+          format: email
+          maxLength: 255
           example: "nuevo@ejemplo.com"
 
     # Esquemas de Producto
@@ -289,5 +397,43 @@ components:
       properties:
         nombre:
           type: string
+          minLength: 3
+          maxLength: 150
+          pattern: '^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.]+$'
         precio:
           type: number
+          minimum: 0.01
+
+    # Esquemas de Pedido
+    Pedido:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5001
+        usuario_id:
+          type: integer
+          example: 10
+        total:
+          type: number
+          format: float
+          example: 250.50
+        fecha:
+          type: string
+          format: date-time
+          example: "2023-10-27T10:00:00Z"
+    PedidoInput:
+      type: object
+      required:
+        - usuario_id
+        - total
+      properties:
+        usuario_id:
+          type: integer
+          minimum: 1
+        total:
+          type: number
+          minimum: 0.01
+        fecha:
+          type: string
+          format: date-time
