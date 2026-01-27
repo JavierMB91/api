@@ -42,6 +42,10 @@ paths:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
           description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # --- USUARIOS ---
   /usuarios:
@@ -60,6 +64,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Usuario'
+        '401':
+          description: No autorizado (Token faltante o inválido)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       tags:
         - Usuarios
@@ -75,6 +85,20 @@ paths:
       responses:
         '201':
           description: Usuario creado exitosamente
+        '400':
+          description: Solicitud incorrecta (JSON malformado)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Datos de entrada inválidos (Validación fallida)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error interno del servidor
 
   /usuarios/{id}:
     get:
@@ -95,6 +119,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - Usuarios
@@ -114,6 +150,22 @@ paths:
       responses:
         '200':
           description: Usuario actualizado
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - Usuarios
@@ -128,6 +180,14 @@ paths:
       responses:
         '200':
           description: Usuario eliminado
+        '401':
+          description: No autorizado
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # --- PRODUCTOS (Ejemplo de otra entidad) ---
   /productos:
@@ -158,6 +218,16 @@ paths:
       responses:
         '201':
           description: Producto creado
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /productos/{id}:
     get:
@@ -178,6 +248,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Producto'
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - Productos
@@ -199,6 +275,18 @@ paths:
       responses:
         '200':
           description: Producto actualizado
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Producto no encontrado
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - Productos
@@ -215,6 +303,10 @@ paths:
       responses:
         '200':
           description: Producto eliminado
+        '401':
+          description: No autorizado
+        '404':
+          description: Producto no encontrado
 
   # --- PEDIDOS ---
   /pedidos:
@@ -233,6 +325,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pedido'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       tags:
         - Pedidos
@@ -248,6 +346,16 @@ paths:
       responses:
         '201':
           description: Pedido creado exitosamente
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '422':
+          description: Datos inválidos (Faltan campos o son incorrectos)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /pedidos/{id}:
     get:
@@ -270,6 +378,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pedido'
+        '401':
+          description: No autorizado
+        '404':
+          description: Pedido no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - Pedidos
@@ -292,6 +408,18 @@ paths:
       responses:
         '200':
           description: Pedido actualizado
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Pedido no encontrado
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - Pedidos
@@ -309,6 +437,10 @@ paths:
       responses:
         '200':
           description: Pedido eliminado
+        '401':
+          description: No autorizado
+        '404':
+          description: Pedido no encontrado
 
 components:
   securitySchemes:
@@ -342,6 +474,17 @@ components:
         expiresIn:
           type: integer
           example: 3600
+    
+    # Esquema de Error Genérico
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Mensaje descriptivo del error"
 
     # Esquemas de Usuario
     Usuario:
