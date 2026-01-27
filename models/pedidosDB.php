@@ -47,16 +47,20 @@ class pedidosDB {
 
     //crear un nuevo pedido
     public function crearPedido($input) {
-        $sql = "INSERT INTO {$this->table} (id_usuario, fecha, total) VALUES (?, ?, ?)";
+        // Se añade el campo `numero_factura` para evitar el error de duplicado.
+        $sql = "INSERT INTO {$this->table} (id_usuario, fecha, total, numero_factura) VALUES (?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
         if($stmt){
             $fecha = date('Y-m-d H:i:s');
+            // Generamos un número de pedido/factura único.
+            $numero_factura = uniqid('PED-', true);
 
-            $stmt->bind_param("isd", 
+            $stmt->bind_param("isds", 
                 $input['id_usuario'],
                 $fecha,
-                $input['total']
+                $input['total'],
+                $numero_factura
             );
 
             if($stmt->execute()) {
