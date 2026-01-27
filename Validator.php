@@ -78,4 +78,30 @@ class Validator {
 
         return $errors;
     }
+
+    /**
+     * Valida los datos de entrada para una Línea de Pedido.
+     */
+    public static function validateLineaPedido($data) {
+        $errors = [];
+
+        // Validar IDs si están presentes (para creación)
+        if (isset($data['id_pedido']) && (!filter_var($data['id_pedido'], FILTER_VALIDATE_INT) || $data['id_pedido'] < 1)) {
+            $errors['id_pedido'] = "El ID de pedido no es válido.";
+        }
+        if (isset($data['id_producto']) && (!filter_var($data['id_producto'], FILTER_VALIDATE_INT) || $data['id_producto'] < 1)) {
+            $errors['id_producto'] = "El ID de producto no es válido.";
+        }
+
+        // Validar Cantidad y Precio (para creación y actualización)
+        if (isset($data['cantidad']) && (!filter_var($data['cantidad'], FILTER_VALIDATE_INT) || $data['cantidad'] < 1)) {
+            $errors['cantidad'] = "La cantidad debe ser un número entero mayor a 0.";
+        }
+
+        if (isset($data['precio_unitario']) && (!filter_var($data['precio_unitario'], FILTER_VALIDATE_FLOAT) || $data['precio_unitario'] < 0.01)) {
+            $errors['precio_unitario'] = "El precio unitario debe ser mayor a 0.";
+        }
+
+        return $errors;
+    }
 }

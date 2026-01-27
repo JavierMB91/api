@@ -19,6 +19,8 @@ tags:
     description: Catálogo de productos
   - name: Pedidos
     description: Gestión de pedidos realizados
+  - name: LineaPedidos
+    description: Gestión de items individuales dentro de un pedido
 
 paths:
   # --- AUTH ---
@@ -442,6 +444,92 @@ paths:
         '404':
           description: Pedido no encontrado
 
+  # --- LINEA PEDIDOS ---
+  /linea_pedidos:
+    post:
+      tags:
+        - LineaPedidos
+      summary: Agregar línea a un pedido
+      description: Crea una nueva línea de pedido vinculando un producto.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaPedidoInput'
+      responses:
+        '201':
+          description: Línea creada exitosamente
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /linea_pedidos/{id}:
+    put:
+      tags:
+        - LineaPedidos
+      summary: Actualizar línea de pedido
+      description: Modifica la cantidad o precio de una línea existente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaPedidoUpdate'
+      responses:
+        '200':
+          description: Línea actualizada
+        '400':
+          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
+        '404':
+          description: Línea no encontrada
+        '422':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - LineaPedidos
+      summary: Eliminar línea de pedido
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Línea eliminada
+        '401':
+          description: No autorizado
+        '404':
+          description: Línea no encontrada
+
 components:
   securitySchemes:
     bearerAuth:
@@ -564,6 +652,58 @@ components:
         fecha:
           type: string
           format: date-time
+          example: "2023-10-27T10:00:00Z"
+        lineas:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineaPedido'
+
+    # Esquemas de LineaPedido
+    LineaPedido:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        id_pedido:
+          type: integer
+          example: 5001
+        id_producto:
+          type: integer
+          example: 101
+        cantidad:
+          type: integer
+          example: 2
+        precio_unitario:
+          type: number
+          format: float
+          example: 15.50
+        nombre_producto:
+          type: string
+          example: "Laptop Gamer"
+        codigo:
+          type: string
+          example: "LPT-001"
+    
+    LineaPedidoInput:
+      type: object
+      required: [id_pedido, id_producto, cantidad, precio_unitario]
+      properties:
+        id_pedido: { type: integer, minimum: 1 }
+        id_producto: { type: integer, minimum: 1 }
+        cantidad: { type: integer, minimum: 1 }
+        precio_unitario: { type: number, minimum: 0.01 }
+
+    LineaPedidoUpdate:
+      type: object
+      required: [cantidad, precio_unitario]
+      properties:
+        cantidad: 
+          type: integer
+          minimum: 1
+        precio_unitario: 
+          type: number
+          minimum: 0.01
           example: "2023-10-27T10:00:00Z"
     PedidoInput:
       type: object
