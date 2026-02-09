@@ -17,13 +17,15 @@ function callAPI($metodo, $endpoint, $datos = []) {
     
     $curl = curl_init();
     
+    $headers = [
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ];
+
     // Configuración básica de cURL
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Accept: application/json'
-    ]);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
     // Configuración según el método HTTP
     switch (strtoupper($metodo)) {

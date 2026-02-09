@@ -30,7 +30,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="productos.php">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos_listar.php">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pedidos_listar.php">Pedidos</a></li>
                 </ul>
             </div>
         </div>

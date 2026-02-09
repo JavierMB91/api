@@ -16,6 +16,6 @@ if (isset($_GET['id'])) {
 }
 
 // Redirigir siempre al listado de productos
-header('Location: productos.php');
+header('Location: productos_listar.php');
 exit;
 ?>

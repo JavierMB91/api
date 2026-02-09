@@ -4,7 +4,7 @@ include 'header.php';
 
 // Verificar si tenemos el ID del producto a editar
 if (!isset($_GET['id'])) {
-    header('Location: productos.php');
+    header('Location: productos_listar.php');
     exit;
 }
 
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($mensaje): ?>
         <div class="alert alert-success">
             <?php echo htmlspecialchars($mensaje); ?>
-            <a href="productos.php" class="alert-link">Volver al listado</a>
+            <a href="productos_listar.php" class="alert-link">Volver al listado</a>
         </div>
     <?php endif; ?>
 
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
-    <form action="productos_editar.php?id=<?php echo $id; ?>" method="POST">
+    <form action="productos_editar.php?id=<?php echo htmlspecialchars($id); ?>" method="POST">
         <div class="mb-3">
             <label for="codigo" class="form-label">Código:</label>
             <input type="text" class="form-control" id="codigo" name="codigo" value="<?php echo htmlspecialchars($producto['codigo'] ?? ''); ?>" required>
@@ -95,13 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if (!empty($producto['imagen'])): ?>
                 <div class="mt-2">
                     <small class="text-muted">Vista previa actual:</small><br>
-                    <img src="<?php echo htmlspecialchars($producto['imagen']); ?>" alt="Vista previa" style="height: 100px; width: auto; object-fit: contain;">
+                    <img src="/api/api/img/<?php echo basename(htmlspecialchars($producto['imagen'])); ?>" alt="Vista previa" style="height: 100px; width: auto; object-fit: contain;">
                 </div>
             <?php endif; ?>
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        <a href="productos.php" class="btn btn-secondary">Cancelar</a>
+        <a href="productos_listar.php" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 

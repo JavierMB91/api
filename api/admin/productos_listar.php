@@ -18,7 +18,7 @@ if (isset($respuesta['success']) && $respuesta['success']) {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Listado de Productos</h2>
         <!-- Enlace al formulario de creación -->
-        <a href="producto_form.php" class="btn btn-success">Crear Nuevo Producto</a>
+        <a href="productos_crear.php" class="btn btn-success">Crear Nuevo Producto</a>
     </div>
 
     <?php if ($error): ?>
@@ -53,12 +53,12 @@ if (isset($respuesta['success']) && $respuesta['success']) {
                             <td><?php echo number_format($producto['precio'], 2); ?> €</td>
                             <td>
                                 <?php if (!empty($producto['imagen'])): ?>
-                                    <img src="<?php echo htmlspecialchars($producto['imagen']); ?>" alt="Img" style="height: 40px; width: auto; object-fit: contain;">
+                                    <img src="/api/api/img/<?php echo basename(htmlspecialchars($producto['imagen'])); ?>" alt="<?php echo htmlspecialchars($producto['nombre']); ?>" style="height: 40px; width: auto; object-fit: contain;">
                                 <?php endif; ?>
                             </td>
                             <td class="text-center">
                                 <a href="productos_editar.php?id=<?php echo $producto['id']; ?>" class="btn btn-sm btn-warning">Editar</a>
-                                <a href="producto_eliminar.php?id=<?php echo $producto['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</a>
+                                <a href="productos_eliminar.php?id=<?php echo $producto['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
