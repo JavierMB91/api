@@ -48,6 +48,7 @@ if (isset($respuesta['success']) && $respuesta['success']) {
                 <p><strong>Nº Factura:</strong> <?php echo !empty($pedido['numero_factura']) ? htmlspecialchars($pedido['numero_factura']) : 'Sin factura'; ?></p>
                 <p><strong>Usuario ID:</strong> <?php echo htmlspecialchars($pedido['id_usuario']); ?></p>
                 <p><strong>Fecha:</strong> <?php echo date('d/m/Y H:i', strtotime($pedido['fecha'])); ?></p>
+                <p><strong>Estado:</strong> <?php echo htmlspecialchars($pedido['estado'] ?? 'pendiente'); ?></p>
                 <p><strong>Total:</strong> <?php echo number_format(isset($pedido['total']) ? (float) $pedido['total'] : $totalLineas, 2); ?> €</p>
             </div>
         </div>

@@ -9,11 +9,11 @@ class pedidosDB {
 
     //extraer los pedidos
     public function getAll() {
-        $sql = "SELECT p.id, p.id_usuario, p.fecha, p.numero_factura, "
+        $sql = "SELECT p.id, p.id_usuario, p.fecha, p.numero_factura, p.estado, "
             . "COALESCE(SUM(lp.cantidad * lp.precio_unitario), p.total, 0) AS total "
             . "FROM {$this->table} p "
             . "LEFT JOIN linea_pedidos lp ON lp.id_pedido = p.id "
-            . "GROUP BY p.id, p.id_usuario, p.fecha, p.numero_factura, p.total";
+            . "GROUP BY p.id, p.id_usuario, p.fecha, p.numero_factura, p.estado, p.total";
 
         $resultado = $this->db->query($sql);
 

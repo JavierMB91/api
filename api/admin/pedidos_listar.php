@@ -38,6 +38,7 @@ if (isset($respuesta['success']) && $respuesta['success']) {
                         <th>Nº Factura</th>
                         <th>Usuario ID</th>
                         <th>Fecha</th>
+                        <th>Estado</th>
                         <th class="text-end">Total</th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -49,6 +50,7 @@ if (isset($respuesta['success']) && $respuesta['success']) {
                             <td><?php echo !empty($pedido['numero_factura']) ? htmlspecialchars($pedido['numero_factura']) : 'Sin factura'; ?></td>
                             <td><?php echo htmlspecialchars($pedido['id_usuario']); ?></td>
                             <td><?php echo date('d/m/Y H:i', strtotime($pedido['fecha'])); ?></td>
+                            <td><?php echo htmlspecialchars($pedido['estado'] ?? 'pendiente'); ?></td>
                             <td class="text-end"><?php echo number_format($pedido['total'], 2); ?> €</td>
                             <td class="text-center">
                                 <a class="btn btn-sm btn-primary" href="pedidos_detalle.php?id=<?php echo htmlspecialchars($pedido['id']); ?>">Ver detalle</a>

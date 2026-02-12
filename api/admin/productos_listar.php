@@ -34,8 +34,13 @@ if (isset($respuesta['success']) && $respuesta['success']) {
     <?php endif; ?>
 
     <?php if (!empty($productos)): ?>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="productosSearch" class="form-control" placeholder="Buscar por codigo o nombre">
+            </div>
+        </div>
         <div class="table-responsive">
-            <table class="table table-striped table-hover border">
+            <table class="table table-striped table-hover border" id="productosTable">
                 <thead class="table-dark">
                     <tr>
                         <th>Código</th>
@@ -67,5 +72,27 @@ if (isset($respuesta['success']) && $respuesta['success']) {
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    (function () {
+        var searchInput = document.getElementById('productosSearch');
+        var table = document.getElementById('productosTable');
+        if (!searchInput || !table) {
+            return;
+        }
+
+        searchInput.addEventListener('input', function () {
+            var term = searchInput.value.toLowerCase().trim();
+            var rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(function (row) {
+                var codigo = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+                var nombre = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                var match = codigo.indexOf(term) !== -1 || nombre.indexOf(term) !== -1;
+                row.style.display = match ? '' : 'none';
+            });
+        });
+    })();
+</script>
 
 <?php include 'footer.php'; ?>
