@@ -77,6 +77,17 @@ class PedidoController {
         // Añadimos las líneas al objeto del pedido
         $pedido['lineas'] = $lineas;
 
+        $totalLineas = 0.0;
+        foreach ($lineas as $linea) {
+            $cantidad = isset($linea['cantidad']) ? (float) $linea['cantidad'] : 0.0;
+            $precioUnitario = isset($linea['precio_unitario']) ? (float) $linea['precio_unitario'] : 0.0;
+            $totalLineas += $cantidad * $precioUnitario;
+        }
+
+        if (!isset($pedido['total']) || (float) $pedido['total'] <= 0) {
+            $pedido['total'] = $totalLineas;
+        }
+
         $respuesta['status_code_header'] = 'HTTP/1.1 200 OK';
         $respuesta['body'] = json_encode(['success' => true, 'data' => $pedido]);
         return $respuesta;
