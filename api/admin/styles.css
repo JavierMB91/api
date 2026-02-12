@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap');
+
+html, body {
+    height: 100%;
+}
+
+:root {
+    --bg: #f5f1ea;
+    --bg-accent: #efe7db;
+    --ink: #2b2b2b;
+    --ink-soft: #5a5a5a;
+    --brand: #1f6f5c;
+    --brand-dark: #175445;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(160deg, var(--bg) 0%, var(--bg-accent) 100%);
+    color: var(--ink);
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, sans-serif;
+}
+
+.page-content {
+    flex: 1 0 auto;
+}
+
+h1, h2, h3, .navbar-brand {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: 0.2px;
+}
+
+.navbar {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.container {
+    max-width: 1100px;
+}
+
+.table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #1e1e1e;
+    color: #ffffff;
+}
+
+.btn-primary {
+    background-color: var(--brand);
+    border-color: var(--brand);
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+}
+
+.form-control:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 0.2rem rgba(31, 111, 92, 0.2);
+}
+
+footer {
+    margin-top: auto;
+}

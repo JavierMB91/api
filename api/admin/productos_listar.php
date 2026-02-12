@@ -70,6 +70,11 @@ if (isset($respuesta['success']) && $respuesta['success']) {
                 </tbody>
             </table>
         </div>
+        <nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Paginacion productos">
+            <button class="btn btn-outline-secondary btn-sm" id="productosPrev">Anterior</button>
+            <ul class="pagination pagination-sm mb-0" id="productosPager"></ul>
+            <button class="btn btn-outline-secondary btn-sm" id="productosNext">Siguiente</button>
+        </nav>
     <?php endif; ?>
 </div>
 
@@ -77,21 +82,93 @@ if (isset($respuesta['success']) && $respuesta['success']) {
     (function () {
         var searchInput = document.getElementById('productosSearch');
         var table = document.getElementById('productosTable');
-        if (!searchInput || !table) {
+        var prevBtn = document.getElementById('productosPrev');
+        var nextBtn = document.getElementById('productosNext');
+        var pager = document.getElementById('productosPager');
+        if (!searchInput || !table || !prevBtn || !nextBtn || !pager) {
             return;
         }
 
-        searchInput.addEventListener('input', function () {
-            var term = searchInput.value.toLowerCase().trim();
-            var rows = table.querySelectorAll('tbody tr');
+        var pageSize = 10;
+        var currentPage = 1;
+        var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+        var filteredRows = rows.slice();
+
+        function renderPage() {
+            var totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
 
             rows.forEach(function (row) {
+                row.style.display = 'none';
+            });
+
+            var start = (currentPage - 1) * pageSize;
+            var end = start + pageSize;
+            filteredRows.slice(start, end).forEach(function (row) {
+                row.style.display = '';
+            });
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            renderPager(totalPages);
+        }
+
+        function renderPager(totalPages) {
+            pager.innerHTML = '';
+            for (var i = 1; i <= totalPages; i += 1) {
+                var item = document.createElement('li');
+                item.className = 'page-item' + (i === currentPage ? ' active' : '');
+
+                var link = document.createElement('button');
+                link.type = 'button';
+                link.className = 'page-link';
+                link.textContent = i;
+                link.dataset.page = String(i);
+
+                item.appendChild(link);
+                pager.appendChild(item);
+            }
+        }
+
+        function applyFilter() {
+            var term = searchInput.value.toLowerCase().trim();
+            filteredRows = rows.filter(function (row) {
                 var codigo = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
                 var nombre = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
-                var match = codigo.indexOf(term) !== -1 || nombre.indexOf(term) !== -1;
-                row.style.display = match ? '' : 'none';
+                return codigo.indexOf(term) !== -1 || nombre.indexOf(term) !== -1;
             });
+            currentPage = 1;
+            renderPage();
+        }
+
+        prevBtn.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                renderPage();
+            }
         });
+
+        nextBtn.addEventListener('click', function () {
+            var totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                renderPage();
+            }
+        });
+
+        pager.addEventListener('click', function (event) {
+            var target = event.target;
+            if (target && target.dataset && target.dataset.page) {
+                currentPage = parseInt(target.dataset.page, 10);
+                renderPage();
+            }
+        });
+
+        searchInput.addEventListener('input', applyFilter);
+
+        renderPage();
     })();
 </script>
 

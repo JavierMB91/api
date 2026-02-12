@@ -708,10 +708,10 @@ components:
     PedidoInput:
       type: object
       required:
-        - usuario_id
+        - id_usuario
         - total
       properties:
-        usuario_id:
+        id_usuario:
           type: integer
           minimum: 1
         total:

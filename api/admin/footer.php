@@ -1,3 +1,5 @@
+    </main>
+
     <footer class="bg-dark text-light text-center py-4 mt-5">
         <div class="container">
             <p class="mb-0">&copy; <?php echo date('Y'); ?> Mi Tienda API. Todos los derechos reservados.</p>

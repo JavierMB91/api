@@ -7,16 +7,8 @@
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Estilos para mantener el footer abajo y mejoras visuales -->
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #f8f9fa;
-        }
-    </style>
+
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body>
 
@@ -36,3 +28,5 @@
             </div>
         </div>
     </nav>
+
+    <main class="page-content">
