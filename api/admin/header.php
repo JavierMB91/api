@@ -24,6 +24,11 @@
                     <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="productos_listar.php">Productos</a></li>
                     <li class="nav-item"><a class="nav-link" href="pedidos_listar.php">Pedidos</a></li>
+                    <?php if (!empty($_SESSION['jwt_token'])): ?>
+                        <li class="nav-item"><a class="nav-link" href="logout.php">Salir</a></li>
+                    <?php else: ?>
+                        <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

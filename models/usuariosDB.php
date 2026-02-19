@@ -29,6 +29,36 @@ class usuariosDB {
     }
 
     //validacion de usuario para login
+    public function getByEmail($mail) {
+        $sql = "SELECT * FROM {$this->table} WHERE mail = ? LIMIT 1";
+
+        $stmt = $this->db->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("s", $mail);
+            $stmt->execute();
+
+            $resultado = $stmt->get_result();
+            if ($resultado && $resultado->num_rows > 0) {
+                $stmt->close();
+                return $resultado->fetch_assoc();
+            }
+            $stmt->close();
+        }
+        return null;
+    }
+
+    public function validateCredentials($mail, $password) {
+        $usuario = $this->getByEmail($mail);
+        if (!$usuario || !isset($usuario['password'])) {
+            return null;
+        }
+
+        if (!password_verify($password, $usuario['password'])) {
+            return null;
+        }
+
+        return $usuario;
+    }
     
 
     //extraer usuario por id
