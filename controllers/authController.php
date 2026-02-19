@@ -52,6 +52,7 @@ class AuthController
             'sub' => (int) $usuario['id'],
             'mail' => $usuario['mail'],
             'nombre' => $usuario['nombre'],
+            'rol' => $usuario['rol'] ?? 'usuario',
             'iat' => $now,
             'exp' => $now + JWT_TTL,
             'iss' => JWT_ISSUER

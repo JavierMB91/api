@@ -6,11 +6,24 @@ include 'header.php';
 $respuesta = callAPI('GET', 'productos');
 $productos = [];
 $error = '';
+$exito = '';
+
+// Capturar mensajes de sesión si existen
+if (!empty($_SESSION['error_mensaje'])) {
+    $error = $_SESSION['error_mensaje'];
+    unset($_SESSION['error_mensaje']);
+}
+if (!empty($_SESSION['exito_mensaje'])) {
+    $exito = $_SESSION['exito_mensaje'];
+    unset($_SESSION['exito_mensaje']);
+}
 
 if (isset($respuesta['success']) && $respuesta['success']) {
     $productos = $respuesta['data'];
 } else {
-    $error = isset($respuesta['error']) ? $respuesta['error'] : 'Error al conectar con la API.';
+    if (!$error) {
+        $error = isset($respuesta['error']) ? $respuesta['error'] : 'Error al conectar con la API.';
+    }
 }
 ?>
 
@@ -24,6 +37,12 @@ if (isset($respuesta['success']) && $respuesta['success']) {
     <?php if ($error): ?>
         <div class="alert alert-danger">
             <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($exito): ?>
+        <div class="alert alert-success">
+            <?php echo htmlspecialchars($exito); ?>
         </div>
     <?php endif; ?>
 

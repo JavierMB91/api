@@ -103,7 +103,16 @@ if (!isPublicRoute($endpoint, $requestMethod, $resourceId)) {
     }
 
     try {
-        JWT::decode($token, JWT_SECRET);
+        $payload = JWT::decode($token, JWT_SECRET);
+        
+        if (!isset($payload['rol']) || $payload['rol'] !== 'admin') {
+            header('HTTP/1.1 403 Forbidden');
+            echo json_encode([
+                'success' => false,
+                'error' => 'Acceso denegado: se requiere rol de administrador'
+            ]);
+            exit();
+        }
     } catch (Exception $e) {
         header('HTTP/1.1 401 Unauthorized');
         echo json_encode([

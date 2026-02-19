@@ -1,6 +1,8 @@
 <?php
 require_once 'conexion.php';
 
+$error = '';
+
 // Verificar si se ha recibido el ID del producto por la URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -8,10 +10,12 @@ if (isset($_GET['id'])) {
     // Llamar a la API con el método DELETE
     $respuesta = callAPI('DELETE', 'productos/' . $id);
     
-    // Opcional: Aquí podrías verificar $respuesta['success'] 
-    // para guardar un mensaje de error/éxito en sesión si quisieras.
-    if (!$respuesta['success']) {
-        // Error al eliminar (podrías loguearlo)
+    // Capturar error si lo hay
+    if (!isset($respuesta['success']) || !$respuesta['success']) {
+        $error = $respuesta['error'] ?? 'Error al eliminar el producto.';
+        $_SESSION['error_mensaje'] = $error;
+    } else {
+        $_SESSION['exito_mensaje'] = 'Producto eliminado correctamente.';
     }
 }
 

@@ -16,7 +16,7 @@ Respuesta (ejemplo):
 {
   "success": true,
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expires_in": 3600
+  "expires_in": 86400
 }
 ```
 
